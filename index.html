@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CalorieTracker AI - Mehdi</title>
+    <title>NutriPulse AI - Pro Calorie Tracker</title>
     <style>
         :root {
-            --primary: #10B981;
-            --primary-dark: #059669;
-            --bg-color: #F3F4F6;
-            --card-bg: #FFFFFF;
-            --text-color: #1F2937;
-            --gray-text: #6B7280;
+            --primary: #6366F1;
+            --primary-gradient: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
+            --bg-color: #0F172A;
+            --card-bg: #1E293B;
+            --text-color: #F8FAFC;
+            --gray-text: #94A3B8;
+            --border-color: #334155;
         }
 
         body {
@@ -28,118 +29,146 @@
 
         .app-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             background: var(--card-bg);
-            border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            position: relative;
+            border: 1px solid var(--border-color);
         }
 
         .header {
-            padding: 15px 20px;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #E5E7EB;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .lang-select {
-            background: #F3F4F6;
-            border: 1px solid #D1D5DB;
-            padding: 5px 10px;
-            border-radius: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 20px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: bold;
             color: var(--text-color);
+            font-weight: bold;
         }
 
         .screen {
-            padding: 20px;
+            padding: 24px;
             display: none;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
         .screen.active {
             display: flex;
         }
 
-        /* Login */
-        .login-screen {
+        /* Google & Login Screen */
+        .login-box {
             text-align: center;
-            padding: 40px 20px;
-            justify-content: center;
-            align-items: center;
+            padding: 30px 10px;
         }
 
         .google-btn {
             background: #FFFFFF;
-            border: 1px solid #D1D5DB;
-            color: #374151;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-weight: 600;
+            border: none;
+            color: #1E293B;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
         }
 
-        /* Dashboard */
-        .calorie-card {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-        }
+        .google-btn:active { transform: scale(0.98); }
 
-        .nav-buttons {
+        /* Form Inputs */
+        .input-group {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 6px;
+            text-align: right;
         }
 
-        .action-btn {
-            flex: 1;
-            background: #F3F4F6;
-            border: 1px solid #E5E7EB;
-            padding: 12px;
+        .input-group label {
+            font-size: 13px;
+            color: var(--gray-text);
+        }
+
+        .input-group input, .input-group select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
             border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .primary-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
             font-weight: bold;
             cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transition: opacity 0.2s;
+        }
+
+        .primary-btn:hover { opacity: 0.9; }
+
+        /* Dashboard Styles */
+        .stats-card {
+            background: var(--primary-gradient);
+            padding: 20px;
+            border-radius: 20px;
             text-align: center;
-            color: var(--text-color);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .scanner-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
             transition: 0.2s;
         }
 
-        .action-btn.active-tab {
-            background: var(--primary);
-            color: white;
+        .option-card:hover {
             border-color: var(--primary);
-        }
-
-        /* AI Camera Scanner */
-        .scanner-box {
-            border: 2px dashed #D1D5DB;
-            border-radius: 16px;
-            padding: 30px;
-            text-align: center;
-            background: #F9FAFB;
-            cursor: pointer;
+            background: rgba(99, 102, 241, 0.05);
         }
 
         .result-box {
-            background: #ECFDF5;
-            border: 1px solid #A7F3D0;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10B981;
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 16px;
             display: none;
         }
     </style>
@@ -147,9 +176,8 @@
 <body>
 
     <div class="app-container">
-        <!-- Header -->
         <div class="header">
-            <span id="app-title" style="font-weight: bold; color: var(--primary);">CalorieTracker AI</span>
+            <span id="app-title" style="font-weight: 800; color: #A855F7; font-size: 18px;">NutriPulse AI</span>
             <select class="lang-select" id="langSwitcher" onchange="changeLanguage()">
                 <option value="ar">🇲🇦 العربية</option>
                 <option value="fr">🇫🇷 Français</option>
@@ -157,52 +185,61 @@
             </select>
         </div>
 
-        <!-- Login Screen -->
         <div id="login-screen" class="screen login-screen active">
-            <h1 style="color: var(--primary); margin-bottom: 5px;">CalorieTracker</h1>
-            <p id="login-desc" style="color: var(--gray-text); margin-bottom: 30px;">تتبع سعراتك بتصوير الماكلا ب الذكاء الاصطناعي.</p>
-            <button class="google-btn" onclick="loginWithGoogle()">
-                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                <span id="google-btn-text">Sign in with Google</span>
-            </button>
+            <div class="login-box">
+                <h1 style="font-size: 26px; margin-bottom: 8px;">مرحباً بك 👋</h1>
+                <p id="login-desc" style="color: var(--gray-text); margin-bottom: 30px; font-size: 14px;">سجل الدخول لحسابك وابدأ رحلة لياقتك الذكية.</p>
+                <button class="google-btn" onclick="nextStep('onboarding-screen')">
+                    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                    <span id="google-btn-text">المتابعة باستخدام Google</span>
+                </button>
+            </div>
         </div>
 
-        <!-- Dashboard & AI Scanner Screen -->
+        <div id="onboarding-screen" class="screen">
+            <h3 id="info-title" style="margin: 0; font-size: 18px;">معلوماتك الشخصية للحساب الدقيق</h3>
+            
+            <div class="input-group">
+                <label id="lbl-weight">الوزن الحالي (كجم)</label>
+                <input type="number" id="user-weight" value="75">
+            </div>
+            
+            <div class="input-group">
+                <label id="lbl-height">الطول (سم)</label>
+                <input type="number" id="user-height" value="175">
+            </div>
+
+            <div class="input-group">
+                <label id="lbl-age">العمر (سنوات)</label>
+                <input type="number" id="user-age" value="24">
+            </div>
+
+            <button class="primary-btn" onclick="calculateAndGoToDash()" id="btn-save-info">حساب وتوليد السعرات الخاصة بي</button>
+        </div>
+
         <div id="dashboard-screen" class="screen">
-            <div class="nav-buttons">
-                <button class="action-btn active-tab" id="tab-dash" onclick="switchTab('dash')">Dashboard</button>
-                <button class="action-btn" id="tab-cam" onclick="switchTab('cam')">📷 AI Scan</button>
+            <div class="stats-card">
+                <p id="target-label" style="margin: 0; font-size: 13px; opacity: 0.9;">سعراتك اليومية المستهدفة</p>
+                <h2 id="calculated-calories" style="margin: 8px 0; font-size: 32px;">2,450 kcal</h2>
+                <p id="sub-target" style="margin: 0; font-size: 12px; opacity: 0.8;">محسوبة بناءً على وزنك وهدفك بدقة</p>
             </div>
 
-            <!-- Tab 1: Dashboard -->
-            <div id="content-dash" class="tab-content">
-                <div class="calorie-card">
-                    <p id="remaining-label">السعرات المتبقية</p>
-                    <h2 style="margin:5px 0;">1,450</h2>
-                    <p style="margin:0; font-size:13px;">/ 2,000 kcal</p>
+            <h4 id="choose-method" style="margin: 5px 0; font-size: 14px; color: var(--gray-text);">اختر طريقة إضافة الوجبة:</h4>
+            
+            <div class="scanner-options">
+                <div class="option-card" onclick="alert('فتح الكاميرا أو رفع صورة الماكلا...')">
+                    <span style="font-size: 26px;">📸</span>
+                    <p id="opt-cam" style="margin: 5px 0 0 0; font-size: 13px; font-weight: bold;">تصوير الماكلا</p>
                 </div>
-                <div style="margin-top: 15px;">
-                    <h4 id="recent-title" style="margin-bottom: 8px;">الكل المضاف حديثاً</h4>
-                    <div style="background:#F9FAFB; padding:12px; border-radius:12px; border:1px solid #E5E7EB; display:flex; justify-content:space-between;">
-                        <span id="food-item-1">🥗 سلطة دجاج سيزر</span>
-                        <strong>420 kcal</strong>
-                    </div>
+                <div class="option-card" onclick="showManualResult()">
+                    <span style="font-size: 26px;">🔍</span>
+                    <p id="opt-manual" style="margin: 5px 0 0 0; font-size: 13px; font-weight: bold;">إدخال يدوي</p>
                 </div>
             </div>
 
-            <!-- Tab 2: AI Camera Scanner -->
-            <div id="content-cam" class="tab-content" style="display: none;">
-                <div class="scanner-box" onclick="simulateAIScan()">
-                    <span style="font-size: 32px;">📸</span>
-                    <p id="scan-instruction" style="margin: 10px 0 0 0; font-weight: 600; color: var(--gray-text);">صور الماكلا هنا باش يتحقق منها الذكاء الاصطناعي</p>
-                </div>
-
-                <div id="ai-result" class="result-box">
-                    <h4 id="ai-title" style="margin: 0 0 5px 0; color: var(--primary-dark);">✅ النتيجة من الذكاء الاصطناعي:</h4>
-                    <p id="ai-food-name" style="margin: 5px 0; font-weight: bold;">طبق بيتزا بالجبن (قطعتين)</p>
-                    <p id="ai-calories" style="margin: 5px 0;">🔥 السعرات: ~550 kcal</p>
-                    <p id="ai-verdict" style="margin: 5px 0; color: #047857;">💡 واش مزيان؟ دسم شوية، ولكن مقبول إلا كنتي فايت فرياضة!</p>
-                </div>
+            <div id="ai-result-box" class="result-box">
+                <h4 id="res-header" style="margin: 0 0 5px 0; color: #34D399;">💡 تحليل الأكل الذكي:</h4>
+                <p id="res-details" style="margin: 0; font-size: 13px;">طاجين دجاج وخضار (~620 سعرة) - صحي جداً وغني بالبروتين!</p>
             </div>
         </div>
     </div>
@@ -210,49 +247,55 @@
     <script>
         const translations = {
             ar: {
-                title: "تتبع السعرات AI",
-                loginDesc: "تتبع سعراتك بتصوير الماكلا ب الذكاء الاصطناعي.",
+                title: "NutriPulse AI",
+                loginDesc: "سجل الدخول لحسابك وابدأ رحلة لياقتك الذكية.",
                 googleBtn: "المتابعة باستخدام Google",
-                remaining: "السعرات المتبقية",
-                recent: "الأكل المضاف حديثاً",
-                food1: "🥗 سلطة دجاج سيزر",
-                scanInst: "صور الماكلا هنا باش يتحقق منها الذكاء الاصطناعي",
-                aiHeader: "✅ النتيجة من الذكاء الاصطناعي:",
-                aiFood: "طبق بيتزا بالجبن (قطعتين)",
-                aiCal: "🔥 السعرات: ~550 kcal",
-                aiVerdict: "💡 واش مزيان؟ دسم شوية، ولكن مقبول إلا كنتي فايت فرياضة!",
-                dashTab: "الرئيسية",
-                camTab: "📷 تصوير الماكلا"
+                infoTitle: "معلوماتك الشخصية للحساب الدقيق",
+                lblWeight: "الوزن الحالي (كجم)",
+                lblHeight: "الطول (سم)",
+                lblAge: "العمر (سنوات)",
+                btnSaveInfo: "حساب وتوليد السعرات الخاصة بي",
+                targetLabel: "سعراتك اليومية المستهدفة",
+                subTarget: "محسوبة بناءً على وزنك وهدفك بدقة",
+                chooseMethod: "اختر طريقة إضافة الوجبة:",
+                optCam: "تصوير الماكلا",
+                optManual: "إدخال يدوي ذكي",
+                resHeader: "💡 تحليل الأكل الذكي:",
+                resDetails: "طاجين دجاج وخضار (~620 سعرة) - صحي جداً وغني بالبروتين!"
             },
             fr: {
-                title: "CalorieTracker AI",
-                loginDesc: "Suivez vos calories en prenant en photo vos plats.",
+                title: "NutriPulse AI",
+                loginDesc: "Connectez-vous et commencez votre voyage fitness.",
                 googleBtn: "Continuer avec Google",
-                remaining: "Calories Restantes",
-                recent: "Récemment ajoutés",
-                food1: "🥗 Salade César au poulet",
-                scanInst: "Prenez en photo votre plat pour l'analyse AI",
-                aiHeader: "✅ Résultat de l'IA :",
-                aiFood: "Pizza au fromage (2 parts)",
-                aiCal: "🔥 Calories : ~550 kcal",
-                aiVerdict: "💡 Est-ce bon ? Un peu riche, mais acceptable après le sport !",
-                dashTab: "Tableau de bord",
-                camTab: "📷 Scan AI"
+                infoTitle: "Vos informations personnelles",
+                lblWeight: "Poids actuel (kg)",
+                lblHeight: "Taille (cm)",
+                lblAge: "Âge (ans)",
+                btnSaveInfo: "Calculer mes calories",
+                targetLabel: "Votre objectif calorique journalier",
+                subTarget: "Calculé selon votre profil avec précision",
+                chooseMethod: "Choisissez comment ajouter le repas:",
+                optCam: "Prendre en photo",
+                optManual: "Recherche manuelle",
+                resHeader: "💡 Analyse IA du repas:",
+                resDetails: "Tajine de poulet (~620 kcal) - Très sain et riche en protéines!"
             },
             en: {
-                title: "CalorieTracker AI",
-                loginDesc: "Track your calories by snapping photos of your meals.",
+                title: "NutriPulse AI",
+                loginDesc: "Sign in and start your smart fitness journey.",
                 googleBtn: "Continue with Google",
-                remaining: "Remaining Calories",
-                recent: "Recently Added",
-                food1: "🥗 Chicken Caesar Salad",
-                scanInst: "Tap to snap your meal photo for AI analysis",
-                aiHeader: "✅ AI Analysis Result:",
-                aiFood: "Cheese Pizza (2 slices)",
-                aiCal: "🔥 Calories: ~550 kcal",
-                aiVerdict: "💡 Is it good? Rich in fats, but fine if you workout!",
-                dashTab: "Dashboard",
-                camTab: "📷 AI Scan"
+                infoTitle: "Your Personal Information",
+                lblWeight: "Current Weight (kg)",
+                lblHeight: "Height (cm)",
+                lblAge: "Age (years)",
+                btnSaveInfo: "Calculate & Generate Calories",
+                targetLabel: "Your Daily Calorie Target",
+                subTarget: "Calculated precisely based on your profile",
+                chooseMethod: "Choose how to add your meal:",
+                optCam: "Snap Meal Photo",
+                optManual: "Manual Entry",
+                resHeader: "💡 AI Meal Analysis:",
+                resDetails: "Chicken & Veggies (~620 kcal) - Very healthy and protein-rich!"
             }
         };
 
@@ -265,41 +308,40 @@
             document.getElementById('app-title').innerText = translations[lang].title;
             document.getElementById('login-desc').innerText = translations[lang].loginDesc;
             document.getElementById('google-btn-text').innerText = translations[lang].googleBtn;
-            document.getElementById('remaining-label').innerText = translations[lang].remaining;
-            document.getElementById('recent-title').innerText = translations[lang].recent;
-            document.getElementById('food-item-1').innerText = translations[lang].food1;
-            document.getElementById('scan-instruction').innerText = translations[lang].scanInst;
-            document.getElementById('ai-title').innerText = translations[lang].aiHeader;
-            document.getElementById('ai-food-name').innerText = translations[lang].aiFood;
-            document.getElementById('ai-calories').innerText = translations[lang].aiCal;
-            document.getElementById('ai-verdict').innerText = translations[lang].aiVerdict;
-            document.getElementById('tab-dash').innerText = translations[lang].dashTab;
-            document.getElementById('tab-cam').innerText = translations[lang].camTab;
+            document.getElementById('info-title').innerText = translations[lang].infoTitle;
+            document.getElementById('lbl-weight').innerText = translations[lang].lblWeight;
+            document.getElementById('lbl-height').innerText = translations[lang].lblHeight;
+            document.getElementById('lbl-age').innerText = translations[lang].lblAge;
+            document.getElementById('btn-save-info').innerText = translations[lang].btnSaveInfo;
+            document.getElementById('target-label').innerText = translations[lang].targetLabel;
+            document.getElementById('sub-target').innerText = translations[lang].subTarget;
+            document.getElementById('choose-method').innerText = translations[lang].chooseMethod;
+            document.getElementById('opt-cam').innerText = translations[lang].optCam;
+            document.getElementById('opt-manual').innerText = translations[lang].optManual;
+            document.getElementById('res-header').innerText = translations[lang].resHeader;
+            document.getElementById('res-details').innerText = translations[lang].resDetails;
         }
 
-        function loginWithGoogle() {
-            document.getElementById('login-screen').classList.remove('active');
-            document.getElementById('dashboard-screen').classList.add('active');
+        function nextStep(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
         }
 
-        function switchTab(tab) {
-            if(tab === 'dash') {
-                document.getElementById('content-dash').style.display = 'block';
-                document.getElementById('content-cam').style.display = 'none';
-                document.getElementById('tab-dash').classList.add('active-tab');
-                document.getElementById('tab-cam').classList.remove('active-tab');
-            } else {
-                document.getElementById('content-dash').style.display = 'none';
-                document.getElementById('content-cam').style.display = 'block';
-                document.getElementById('tab-cam').classList.add('active-tab');
-                document.getElementById('tab-dash').classList.remove('active-tab');
-            }
+        function calculateAndGoToDash() {
+            const w = document.getElementById('user-weight').value;
+            const h = document.getElementById('user-height').value;
+            const a = document.getElementById('user-age').value;
+            
+            // معادلة بسيطة وحقيقية لتقدير السعرات (Mifflin-St Jeor مبسطة)
+            let calculated = Math.round((10 * w) + (6.25 * h) - (5 * a) + 400);
+            document.getElementById('calculated-calories').innerText = calculated + " kcal";
+            
+            nextStep('dashboard-screen');
         }
 
-        function simulateAIScan() {
-            const resBox = document.getElementById('ai-result');
-            resBox.style.display = 'block';
-            resBox.style.animation = 'fadeIn 0.5s';
+        function showManualResult() {
+            const box = document.getElementById('ai-result-box');
+            box.style.display = 'block';
         }
     </script>
 </body>
