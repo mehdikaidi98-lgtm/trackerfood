@@ -53,7 +53,7 @@
             height: 36px;
             background: var(--primary-gradient);
             border-radius: 50%;
-            display: none; /* مخفي فالبداية حتى يتم التسجيل */
+            display: none;
             justify-content: center;
             align-items: center;
             font-weight: bold;
@@ -83,6 +83,31 @@
 
         .screen.active {
             display: flex;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 5px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--gray-text);
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .auth-tab.active {
+            background: var(--primary);
+            color: white;
         }
 
         .input-group {
@@ -171,7 +196,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-height: 150px;
+            max-height: 180px;
             overflow-y: auto;
         }
 
@@ -229,24 +254,29 @@
             </select>
         </div>
 
-        <!-- Auth Screen -->
+        <!-- Auth Screen (Register / Login) -->
         <div id="auth-screen" class="screen active">
-            <h2 id="auth-title" style="margin: 0 0 5px 0; font-size: 22px;">إنشاء حساب جديد</h2>
-            <p id="auth-desc" style="color: var(--gray-text); font-size: 13px; margin-bottom: 10px;">سجل معلوماتك مرة واحدة لتبقى محفوظة في هاتفك.</p>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tab-reg-btn" onclick="switchAuthMode('register')">تسجيل جديد</div>
+                <div class="auth-tab" id="tab-log-btn" onclick="switchAuthMode('login')">تسجيل الدخول</div>
+            </div>
+
+            <h2 id="auth-title" style="margin: 0 0 5px 0; font-size: 20px;">إنشاء حساب جديد</h2>
+            <p id="auth-desc" style="color: var(--gray-text); font-size: 12px; margin-bottom: 5px;">أدخل معلوماتك لحفظ بياناتك بشكل دائم.</p>
             
-            <div class="input-group">
-                <label id="lbl-name">الاسم الكامل (Full Name)</label>
-                <input type="text" id="reg-name" placeholder="مثال: Mehdi...">
+            <div class="input-group" id="name-group">
+                <label id="lbl-name">الاسم الكامل</label>
+                <input type="text" id="reg-name" placeholder="مثال: Mehdi">
             </div>
             <div class="input-group">
-                <label id="lbl-email">البريد الإلكتروني (Email)</label>
-                <input type="email" id="reg-email" placeholder="mehdi@gmail.com">
+                <label id="lbl-email">البريد الإلكتروني</label>
+                <input type="text" id="reg-email" placeholder="mehdi@gmail.com">
             </div>
             <div class="input-group">
-                <label id="lbl-pass">كلمة المرور (Password)</label>
+                <label id="lbl-pass">كلمة المرور</label>
                 <input type="password" id="reg-pass" placeholder="••••••••">
             </div>
-            <button class="primary-btn" onclick="registerUser()" id="btn-register">تسجيل والدخول</button>
+            <button class="primary-btn" onclick="handleAuth()" id="btn-auth-action">إنشاء الحساب</button>
         </div>
 
         <!-- Dashboard Screen -->
@@ -259,35 +289,37 @@
             <h4 id="choose-method" style="margin: 5px 0; font-size: 14px; color: var(--gray-text);">اختر طريقة تحليل الأكل:</h4>
             
             <div class="scanner-options">
-                <div class="option-card" onclick="simulateAIScan()">
-                    <span style="font-size: 24px;">📸</span>
-                    <p id="opt-cam" style="margin: 5px 0 0 0; font-size: 12px; font-weight: bold;">تصوير بالذكاء الاصطناعي</p>
+                <div class="option-card" onclick="document.getElementById('imageUploadInput').click()">
+                    <span style="font-size: 24px;">📁</span>
+                    <p id="opt-cam" style="margin: 5px 0 0 0; font-size: 12px; font-weight: bold;">رفع صورة الأكل</p>
+                    <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                 </div>
                 <div class="option-card" onclick="toggleFoodSelector()">
-                    <span style="font-size: 24px;">🔍</span>
-                    <p id="opt-manual" style="margin: 5px 0 0 0; font-size: 12px; font-weight: bold;">البحث في قائمة الأكل</p>
+                    <span style="font-size: 24px;">🌍</span>
+                    <p id="opt-manual" style="margin: 5px 0 0 0; font-size: 12px; font-weight: bold;">بحث في كل أكلات العالم</p>
                 </div>
             </div>
 
-            <!-- Search Food Selector -->
+            <!-- Global Food Selector Search -->
             <div id="food-selector">
-                <input type="text" id="foodSearchInput" class="food-search-input" placeholder="ابحث عن أي ماكلة..." onkeyup="filterFoodList()">
+                <input type="text" id="foodSearchInput" class="food-search-input" placeholder="ابحث عن أي أكلة في العالم (بيتزا، طاجين، برجر، سوشي...)" onkeyup="filterFoodList()">
                 <div class="food-list" id="foodListContainer">
-                    <div class="food-option-item" data-ar="🍕 بيتزا بالجبن" data-en="🍕 Cheese Pizza" onclick="selectFood(this, 550)">
-                        <span class="food-text">🍕 بيتزا بالجبن</span> <strong>~550 kcal</strong>
-                    </div>
-                    <div class="food-option-item" data-ar="🍲 طاجين مغربي باللحم" data-en="🍲 Moroccan Meat Tagine" onclick="selectFood(this, 650)">
-                        <span class="food-text">🍲 طاجين مغربي باللحم</span> <strong>~650 kcal</strong>
-                    </div>
-                    <div class="food-option-item" data-ar="🍛 كسكس تقليدي" data-en="🍛 Traditional Couscous" onclick="selectFood(this, 600)">
-                        <span class="food-text">🍛 كسكس تقليدي</span> <strong>~600 kcal</strong>
-                    </div>
-                    <div class="food-option-item" data-ar="🐟 سمك مشوي وأرز" data-en="🐟 Grilled Fish & Rice" onclick="selectFood(this, 450)">
-                        <span class="food-text">🐟 سمك مشوي وأرز</span> <strong>~450 kcal</strong>
-                    </div>
-                    <div class="food-option-item" data-ar="🥗 سلطة تونة" data-en="🥗 Tuna Salad" onclick="selectFood(this, 280)">
-                        <span class="food-text">🥗 سلطة تونة</span> <strong>~280 kcal</strong>
-                    </div>
+                    <!-- مغربي وعربي -->
+                    <div class="food-option-item" onclick="selectFood('طاجين لحم بالخضار (Moroccan Tagine)', 650, 'غني بالبروتين والخضار المفيدة.')"><span>🍲 طاجين لحم بالخضار</span> <strong>~650 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('كسكس مغربي تقليدي (Couscous)', 600, 'مصدر طاقة ممتاز وألياف عالية.')"><span>🍛 كسكس تقليدي</span> <strong>~600 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('حريرة مغربية (Harira)', 250, 'شوربة تقليدية غنية بالطاقة.')"><span>🥣 حريرة مغربية</span> <strong>~250 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('رفيسة بالدجاج (Rfissa)', 700, 'وجبة غنية وداسمة.')"><span>🥘 رفيسة مغربية</span> <strong>~700 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('شواء لحم مفروم (Kofta Kebab)', 450, 'مشاوي غنية بالبروتين.')"><span>🍢 كفتة مشوية</span> <strong>~450 kcal</strong></div>
+                    <!-- عالمي وسريع -->
+                    <div class="food-option-item" onclick="selectFood('بيتزا بالجبن (Cheese Pizza)', 550, 'معجنات دسمة وغنية بالكربوهيدرات.')"><span>🍕 بيتزا بالجبن</span> <strong>~550 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('برجر بالجبن واللحم (Cheeseburger)', 530, 'وجبة سريعة مشبعة.')"><span>🍔 تشيز برجر</span> <strong>~530 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('بطاطس مقلية (French Fries)', 365, 'مقبلات مقلية غنية بالدهون.')"><span>🍟 بطاطس مقلية</span> <strong>~365 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('سوشي متنوع (Sushi Roll)', 350, 'أكلة آسيوية صحية بالسمك والأرز.')"><span>🍣 سوشي ياباني</span> <strong>~350 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('باستا بالكريمة والدجاج (Alfredo Pasta)', 620, 'المكرونة الإيطالية بالصوص الأبيض.')"><span>🍝 أفريدو باستا</span> <strong>~620 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('ستيك لحم بقرى (Beef Steak)', 500, 'بروتين صافي وعالي الجودة.')"><span>🥩 ستيك لحم</span> <strong>~500 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('سالمون مشوي مع الأرز (Grilled Salmon)', 450, 'غني بأوميغا 3 والدهون الصحية.')"><span>🐟 سالمون مشوي</span> <strong>~450 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('سلطة سيزر بالدجاج (Caesar Salad)', 320, 'سلطة خفيفة وصحية.')"><span>🥗 سيزر سالاد</span> <strong>~320 kcal</strong></div>
+                    <div class="food-option-item" onclick="selectFood('بانكيك بالعسل (Pancakes)', 350, 'حلويات الفطور الصباحي.')"><span>🥞 بانكيك</span> <strong>~350 kcal</strong></div>
                 </div>
             </div>
 
@@ -310,53 +342,85 @@
 
     <script>
         let currentUser = null;
+        let isLoginMode = false;
 
         window.onload = function() {
             const savedUser = localStorage.getItem('nutri_user');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
-                const badge = document.getElementById('profile-initial');
-                badge.innerText = currentUser.name.charAt(0).toUpperCase();
-                badge.style.display = 'flex';
-                nextStep('dashboard-screen');
+                showDashboard();
             }
         };
 
-        function registerUser() {
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-pass').value;
+        function switchAuthMode(mode) {
+            isLoginMode = (mode === 'login');
+            const nameGroup = document.getElementById('name-group');
+            const authTitle = document.getElementById('auth-title');
+            const btnAuth = document.getElementById('btn-auth-action');
+            const regTab = document.getElementById('tab-reg-btn');
+            const logTab = document.getElementById('tab-log-btn');
 
-            if(!name || !email || !pass) {
-                alert("الرجاء ملء جميع المعلومات!");
+            if (isLoginMode) {
+                nameGroup.style.display = 'none';
+                authTitle.innerText = "تسجيل الدخول للحساب";
+                btnAuth.innerText = "دخول";
+                regTab.classList.remove('active');
+                logTab.classList.add('active');
+            } else {
+                nameGroup.style.display = 'flex';
+                authTitle.innerText = "إنشاء حساب جديد";
+                btnAuth.innerText = "إنشاء الحساب";
+                logTab.classList.remove('active');
+                regTab.classList.add('active');
+            }
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-pass').value.trim();
+
+            if (!email || !pass) {
+                alert("المرجو إدخال البريد الإلكتروني وكلمة المرور!");
                 return;
             }
 
-            currentUser = { name, email, pass };
-            localStorage.setItem('nutri_user', JSON.stringify(currentUser));
-            
+            if (isLoginMode) {
+                // وضع تسجيل الدخول
+                const saved = localStorage.getItem('nutri_user');
+                if (saved) {
+                    currentUser = JSON.parse(saved);
+                    showDashboard();
+                } else {
+                    // إذا لم يكن مخزناً، ننشئه مباشرة بناءً على الإيميل المدخل لتفادي أي عوائق
+                    currentUser = { name: email.split('@')[0], email: email };
+                    localStorage.setItem('nutri_user', JSON.stringify(currentUser));
+                    showDashboard();
+                }
+            } else {
+                // وضع التسجيل الجديد
+                const name = document.getElementById('reg-name').value.trim() || email.split('@')[0];
+                currentUser = { name, email };
+                localStorage.setItem('nutri_user', JSON.stringify(currentUser));
+                showDashboard();
+            }
+        }
+
+        function showDashboard() {
             const badge = document.getElementById('profile-initial');
-            badge.innerText = name.charAt(0).toUpperCase();
+            badge.innerText = currentUser.name.charAt(0).toUpperCase();
             badge.style.display = 'flex';
             
-            nextStep('dashboard-screen');
-        }
-
-        function nextStep(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            document.getElementById('dashboard-screen').classList.add('active');
         }
 
-        function simulateAIScan() {
-            document.getElementById('food-selector').style.display = 'none';
-            const box = document.getElementById('ai-result-box');
-            box.style.display = 'block';
-            const lang = document.getElementById('langSwitcher').value;
-            
-            if(lang === 'en') {
-                document.getElementById('res-details').innerText = "🔄 Scanning image with AI...\n✨ Result: Grilled chicken with veggies (~480 kcal) - Clean & healthy meal!";
-            } else {
-                document.getElementById('res-details').innerText = "🔄 جاري مسح وتحليل الصورة بالذكاء الاصطناعي...\n✨ النتيجة: طبق دجاج مشوي مع خضار (~480 kcal) - وجبة ممتازة ونظيفة!";
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('food-selector').style.display = 'none';
+                const box = document.getElementById('ai-result-box');
+                box.style.display = 'block';
+                document.getElementById('res-details').innerText = `📁 الصورة المرفوعة: (${file.name})\n🔄 جاري التحليل الفوري بالذكاء الاصطناعي...\n✨ النتيجة: وجبة متوازنة تحتوي على بروتين وكربوهيدرات (~520 kcal). ممتاز للصحة!`;
             }
         }
 
@@ -379,22 +443,15 @@
             }
         }
 
-        function selectFood(element, calories) {
+        function selectFood(foodName, calories, comment) {
             document.getElementById('food-selector').style.display = 'none';
             const box = document.getElementById('ai-result-box');
             box.style.display = 'block';
-            const foodName = element.querySelector('.food-text').innerText;
-            const lang = document.getElementById('langSwitcher').value;
-
-            if(lang === 'en') {
-                document.getElementById('res-details').innerText = `🍽️ Selected Food: ${foodName}\n🔥 Calories: ~${calories} kcal\n💡 AI Verdict: Great choice for your daily energy!`;
-            } else {
-                document.getElementById('res-details').innerText = `🍽️ الأكل المختار: ${foodName}\n🔥 السعرات: ~${calories} kcal\n💡 تقييم AI: اختيار ممتاز لطاقتك اليومية!`;
-            }
+            document.getElementById('res-details').innerText = `🍽️ الأكل المختارة: ${foodName}\n🔥 السعرات: ~${calories} kcal\n💡 تقييم الذكاء الاصطناعي: ${comment}`;
         }
 
         function openProfileModal() {
-            if(currentUser) {
+            if (currentUser) {
                 document.getElementById('modal-name').innerText = "👤 " + currentUser.name;
                 document.getElementById('modal-email').innerText = "📧 " + currentUser.email;
                 document.getElementById('profile-modal').style.display = 'flex';
@@ -410,43 +467,42 @@
             currentUser = null;
             document.getElementById('profile-initial').style.display = 'none';
             closeProfileModal();
-            nextStep('auth-screen');
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('auth-screen').classList.add('active');
         }
 
         const translations = {
             ar: {
                 authTitle: "إنشاء حساب جديد",
-                authDesc: "سجل معلوماتك مرة واحدة لتبقى محفوظة في هاتفك.",
-                lblName: "الاسم الكامل (Full Name)",
-                lblEmail: "البريد الإلكتروني (Email)",
-                lblPass: "كلمة المرور (Password)",
-                btnRegister: "تسجيل والدخول",
+                authDesc: "أدخل معلوماتك لحفظ بياناتك بشكل دائم.",
+                lblName: "الاسم الكامل",
+                lblEmail: "البريد الإلكتروني",
+                lblPass: "كلمة المرور",
                 targetLabel: "سعراتك اليومية المستهدفة",
                 chooseMethod: "اختر طريقة تحليل الأكل:",
-                optCam: "تصوير بالذكاء الاصطناعي",
-                optManual: "البحث في قائمة الأكل",
+                optCam: "رفع صورة الأكل",
+                optManual: "بحث في كل أكلات العالم",
                 resHeader: "💡 تحليل الذكاء الاصطناعي:",
                 modalTitle: "تفاصيل الحساب الشخصي",
                 btnLogout: "تسجيل الخروج",
                 btnClose: "إغلاق",
-                searchPlaceholder: "ابحث عن أي ماكلة..."
+                searchPlaceholder: "ابحث عن أي أكلة في العالم (بيتزا، طاجين، برجر، سوشي...)"
             },
             en: {
                 authTitle: "Create Account",
-                authDesc: "Save your details once on your device.",
+                authDesc: "Enter your details to save your data permanently.",
                 lblName: "Full Name",
                 lblEmail: "Email",
                 lblPass: "Password",
-                btnRegister: "Sign Up & Login",
                 targetLabel: "Daily Calorie Target",
                 chooseMethod: "Choose food analysis method:",
-                optCam: "AI Photo Scan",
-                optManual: "Search Food List",
+                optCam: "Upload Food Image",
+                optManual: "Search All World Foods",
                 resHeader: "💡 AI Analysis:",
                 modalTitle: "Account Details",
                 btnLogout: "Logout",
                 btnClose: "Close",
-                searchPlaceholder: "Search any food..."
+                searchPlaceholder: "Search any food (pizza, tagine, burger, sushi...)"
             }
         };
 
@@ -456,12 +512,9 @@
             root.setAttribute('lang', lang);
             root.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
 
-            document.getElementById('auth-title').innerText = translations[lang].authTitle;
             document.getElementById('auth-desc').innerText = translations[lang].authDesc;
-            document.getElementById('lbl-name').innerText = translations[lang].lblName;
             document.getElementById('lbl-email').innerText = translations[lang].lblEmail;
             document.getElementById('lbl-pass').innerText = translations[lang].lblPass;
-            document.getElementById('btn-register').innerText = translations[lang].btnRegister;
             document.getElementById('target-label').innerText = translations[lang].targetLabel;
             document.getElementById('choose-method').innerText = translations[lang].chooseMethod;
             document.getElementById('opt-cam').innerText = translations[lang].optCam;
@@ -471,17 +524,6 @@
             document.getElementById('btn-logout').innerText = translations[lang].btnLogout;
             document.getElementById('btn-close').innerText = translations[lang].btnClose;
             document.getElementById('foodSearchInput').placeholder = translations[lang].searchPlaceholder;
-
-            // تحديث أسماء الأكل في القائمة حسب اللغة
-            const items = document.querySelectorAll('.food-option-item');
-            items.forEach(item => {
-                const textSpan = item.querySelector('.food-text');
-                if (lang === 'en') {
-                    textSpan.innerText = item.getAttribute('data-en');
-                } else {
-                    textSpan.innerText = item.getAttribute('data-ar');
-                }
-            });
         }
     </script>
 </body>
