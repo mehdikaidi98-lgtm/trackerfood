@@ -1,477 +1,494 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="html-root">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriPulse & Carizma AI - Fullscreen</title>
-    <style>
-        :root {
-            --primary: #6366F1;
-            --primary-gradient: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
-            --bg-color: #0B0F19;
-            --card-bg: #1E293B;
-            --text-color: #F8FAFC;
-            --gray-text: #94A3B8;
-            --border-color: #334155;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body, html {
-            width: 100vw;
-            height: 100vh;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-        }
-
-        .app-container {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-color);
-            position: relative;
-        }
-
-        .header {
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-        }
-
-        .profile-badge {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-gradient);
-            border-radius: 50%;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.5);
-        }
-
-        .lang-select {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 13px;
-            color: var(--text-color);
-        }
-
-        .screen {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        /* Welcome Page Styles */
-        .welcome-box {
-            max-width: 700px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 40px;
-            background: var(--card-bg);
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        .welcome-box h1 {
-            font-size: 32px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .welcome-box p {
-            color: var(--gray-text);
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        /* Auth Screen */
-        .auth-box {
-            width: 100%;
-            max-width: 450px;
-            background: var(--card-bg);
-            padding: 35px;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            text-align: right;
-        }
-
-        .input-group label {
-            font-size: 13px;
-            color: var(--gray-text);
-        }
-
-        .input-group input {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-color);
-            padding: 14px;
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .primary-btn {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-            transition: 0.2s;
-        }
-
-        .primary-btn:hover {
-            opacity: 0.9;
-        }
-
-        /* Dashboard & Features Layout */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .dash-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 25px;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .carizma-section {
-            background: linear-gradient(145deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1));
-            border: 1px solid var(--primary);
-        }
-
-        .food-search-input {
-            background: rgba(255,255,255,0.07);
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            border-radius: 10px;
-            color: white;
-            outline: none;
-            width: 100%;
-        }
-
-        .food-list {
-            max-height: 140px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .food-option-item {
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-        }
-
-        .food-option-item:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Modal */
-        .modal {
-            position: absolute;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(11, 15, 25, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            width: 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Block Digest — The Latest Minecraft Updates, Explained (and Roasted)</title>
+<meta name="description" content="A funny, accurate field guide to Minecraft's 2026 game drops: Wilderness Bound, Chaos Cubed, Tiny Takeover and the upcoming Deep Freeze." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+    
+<div class="scrollbar" aria-hidden="true"><div class="scrollbar-fill" id="scrollFill"></div></div>
 
-    <div class="app-container">
-        <!-- Header -->
-        <div class="header">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div class="profile-badge" id="profile-initial" onclick="openProfileModal()">M</div>
-                <span style="font-weight: 800; color: #A855F7; font-size: 20px;">NutriPulse & Carizma</span>
-            </div>
-            <select class="lang-select" id="langSwitcher" onchange="changeLanguage()">
-                <option value="ar">🇲🇦 العربية</option>
-                <option value="en">🇬🇧 English</option>
-            </select>
+<header class="topbar">
+  <a class="brand" href="#top">
+    <span class="brand-cube" aria-hidden="true"></span>
+    <span>BLOCK<span class="brand-dim">DIGEST</span></span>
+  </a>
+  <nav class="nav" aria-label="Main">
+    <a href="#latest">Latest</a>
+    <a href="#timeline">2026 drops</a>
+    <a href="#deepfreeze">Deep Freeze</a>
+    <a href="#versions">Version decoder</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <a class="btn btn-small btn-ghost" href="#latest">Start reading</a>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="dot"></span> Updated November 25, 2026 · no snapshots were harmed</p>
+        <h1>
+          Every Minecraft update,<br />
+          <span class="hl">explained properly.</span><br />
+          <span class="hl-2">Roasted gently.</span>
+        </h1>
+        <p class="lede">
+          Mojang now ships four “game drops” a year instead of one giant summer update, which means
+          there is always something new to be confused about. Here is what actually came out, what
+          is coming next, and why the version number went from <code>1.21.11</code> to <code>26.3</code>
+          like it owed you money.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="#latest">What’s out right now</a>
+          <a class="btn btn-ghost" href="#deepfreeze">The icy one coming next</a>
         </div>
+      </div>
 
-        <!-- Screen 1: Welcome Explanation Page (First time) -->
-        <div id="welcome-screen" class="screen active">
-            <div class="welcome-box">
-                <h1 id="wel-title">مرحباً بك في عالم الاقتصاد الرقمي والذكاء الاصطناعي</h1>
-                <p id="wel-desc">هذا الموقع يجمع بين نظامين رئيسيين: <strong>إدارة الاقتصاد الغذائي والسعرات</strong> لمتابعة صحتك، وقسم خاص مع الذكاء الاصطناعي <strong>"كاريزما (Carizma)"</strong> لتعليم البرمجة وتطوير مهاراتك خطوة بخطوة.</p>
-                <button class="primary-btn" onclick="goToAuth()" id="wel-btn">ابدأ الآن</button>
-            </div>
+      <aside class="status-card" aria-label="Current version status">
+        <div class="status-head">
+          <span class="pulse"></span> LIVE STATUS BOARD
         </div>
-
-        <!-- Screen 2: Auth (Register / Login) -->
-        <div id="auth-screen" class="screen">
-            <div class="auth-box">
-                <h2 id="auth-title" style="text-align: center; font-size: 22px;">إنشاء حساب جديد</h2>
-                <div class="input-group">
-                    <label id="lbl-name">الاسم الكامل</label>
-                    <input type="text" id="reg-name" placeholder="مثال: Mehdi">
-                </div>
-                <div class="input-group">
-                    <label id="lbl-email">البريد الإلكتروني</label>
-                    <input type="text" id="reg-email" placeholder="mehdi@gmail.com">
-                </div>
-                <div class="input-group">
-                    <label id="lbl-pass">كلمة المرور</label>
-                    <input type="password" id="reg-pass" placeholder="••••••••">
-                </div>
-                <button class="primary-btn" onclick="registerUser()" id="btn-auth">تسجيل والدخول</button>
-            </div>
-        </div>
-
-        <!-- Screen 3: Fullscreen Dashboard (Economy + Carizma AI) -->
-        <div id="dashboard-screen" class="screen">
-            <div class="dashboard-grid">
-                <!-- Card 1: Food Economy & AI Scan -->
-                <div class="dash-card">
-                    <h3 style="color: #A855F7;">🍎 اقتصاد الغذاء والسعرات</h3>
-                    <div style="background: var(--primary-gradient); padding: 15px; border-radius: 14px; text-align: center;">
-                        <p style="font-size: 12px; opacity: 0.9;">ميزانية السعرات اليومية</p>
-                        <h2 style="font-size: 24px;">2,450 kcal</h2>
-                    </div>
-                    <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-                    <button class="primary-btn" onclick="document.getElementById('imageUploadInput').click()">📸 رفع صورة أكل للتحليل</button>
-                    
-                    <input type="text" class="food-search-input" id="foodSearchInput" placeholder="ابحث في أكلات العالم..." onkeyup="filterFoodList()">
-                    <div class="food-list" id="foodListContainer">
-                        <div class="food-option-item" onclick="selectFood('طاجين مغربي', 650)"><span>🍲 طاجين مغربي</span><strong>650 kcal</strong></div>
-                        <div class="food-option-item" onclick="selectFood('بيتزا إيطالية', 550)"><span>🍕 بيتزا إيطالية</span><strong>550 kcal</strong></div>
-                        <div class="food-option-item" onclick="selectFood('سوشي ياباني', 350)"><span>🍣 سوشي ياباني</span><strong>350 kcal</strong></div>
-                    </div>
-                    <p id="res-box" style="font-size: 13px; color: #34D399; display:none;"></p>
-                </div>
-
-                <!-- Card 2: Carizma AI Programming Mentor -->
-                <div class="dash-card carizma-section">
-                    <h3 style="color: #6366F1;">🤖 كاريزما لتعليم البرمجة (Carizma AI)</h3>
-                    <p style="font-size: 13px; color: var(--gray-text);">مساعدك الذكي لتعلم كودينغ، HTML, CSS, JavaScript والأدواردو.</p>
-                    <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; font-family: monospace; font-size: 12px; color: #38BDF8;">
-                        carizma > أهلاً بك يا مهدي! ماذا تريد أن تبرمج اليوم؟
-                    </div>
-                    <input type="text" class="food-search-input" id="carizmaInput" placeholder="اطلب كود أو اسأل كاريزما...">
-                    <button class="primary-btn" onclick="askCarizma()">إرسال لكاريزما</button>
-                    <p id="carizma-reply" style="font-size: 13px; color: #A855F7; display:none;"></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profile Modal -->
-        <div id="profile-modal" class="modal">
-            <div class="modal-content">
-                <h3 style="color: #A855F7;">تفاصيل الحساب</h3>
-                <p id="modal-name" style="font-weight: bold;"></p>
-                <p id="modal-email" style="color: var(--gray-text); font-size: 13px;"></p>
-                <button class="primary-btn" onclick="logoutUser()" style="background: #EF4444;">تسجيل الخروج</button>
-                <button class="primary-btn" onclick="closeProfileModal()" style="background: rgba(255,255,255,0.1);">إغلاق</button>
-            </div>
-        </div>
+        <dl class="status-list">
+          <div>
+            <dt>Latest Java</dt>
+            <dd>26.3 <span class="tag">Wilderness Bound</span></dd>
+          </div>
+          <div>
+            <dt>Latest Bedrock</dt>
+            <dd>26.63 <span class="tag tag-dim">hotfix on 26.60</span></dd>
+          </div>
+          <div>
+            <dt>In the oven</dt>
+            <dd>26.4 <span class="tag tag-ice">Deep Freeze</span></dd>
+          </div>
+          <div>
+            <dt>Testing right now</dt>
+            <dd>26.4 Pre-release 1 <span class="tag tag-dim">Nov 24</span></dd>
+          </div>
+        </dl>
+        <p class="status-foot">That is not a typo. Java and Bedrock have different numbers, and yes, that is annoying.</p>
+      </aside>
     </div>
 
-    <script>
-        let currentUser = null;
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>★ NEW: ice caves are in testing</span>
+        <span>★ name tags are craftable now, finally</span>
+        <span>★ there is no Minecraft 1.22</span>
+        <span>★ sulfur cube absorbs blocks, including your dignity</span>
+        <span>★ four drops a year is a lot of drops</span>
+        <span>★ NEW: ice caves are in testing</span>
+        <span>★ name tags are craftable now, finally</span>
+        <span>★ there is no Minecraft 1.22</span>
+        <span>★ sulfur cube absorbs blocks, including your dignity</span>
+        <span>★ four drops a year is a lot of drops</span>
+      </div>
+    </div>
+  </section>
 
-        window.onload = function() {
-            const saved = localStorage.getItem('nutri_user');
-            if (saved) {
-                currentUser = JSON.parse(saved);
-                showDashboard();
-            }
-        };
+  <!-- LATEST -->
+  <section class="section" id="latest">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="kicker">01 — The latest release</p>
+        <h2>Wilderness Bound <span class="ver">26.3</span></h2>
+        <p class="sub">
+          Out since <strong>15 September 2026</strong> on Java 26.3 and Bedrock 26.50. It is the autumn
+          drop: a rust-coloured forest, a campsite nobody cleaned up, and furniture. So much furniture.
+        </p>
+      </div>
 
-        function goToAuth() {
-            document.getElementById('welcome-screen').classList.remove('active');
-            document.getElementById('auth-screen').classList.add('active');
-        }
+      <div class="latest-grid">
+        <figure class="latest-art reveal">
+          <img src="assets/dappled.jpg" alt="Pixel art of a rust-orange dappled forest with an abandoned camp, tent and straw bed." />
+          <figcaption>The dappled forest, pictured shortly before a creeper ruined the mood.</figcaption>
+        </figure>
 
-        function registerUser() {
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-pass').value.trim();
+        <div class="latest-notes">
+          <article class="card reveal">
+            <h3>🍂 The Dappled Forest</h3>
+            <p>
+              A new biome with an autumn colour scheme that generates near cold biomes. Poplar trees
+              bring a whole poplar wood set, so your base can finally be stylish <em>and</em> harvestable.
+            </p>
+            <p class="joke">Finally, a biome that matches the colour of your unread quest log.</p>
+          </article>
 
-            if (!email || !pass) {
-                alert("المرجو إدخال البريد الإلكتروني وكلمة المرور!");
-                return;
-            }
+          <article class="card reveal">
+            <h3>🏕️ Abandoned Camps</h3>
+            <p>
+              Campsites spawn in the wilderness with tents, campfires and loot. They are “abandoned”,
+              which in Minecraft means “free stuff with a 40% chance of a zombie”.
+            </p>
+            <p class="joke">Bring a map. Bring a sword. Ideally bring both.</p>
+          </article>
 
-            currentUser = { name: name || email.split('@')[0], email };
-            localStorage.setItem('nutri_user', JSON.stringify(currentUser));
-            showDashboard();
-        }
+          <article class="card reveal">
+            <h3>🛏️ Straw Beds &amp; Cushions</h3>
+            <p>
+              Sleep on straw, sit on cushions, and put your campfire stories somewhere other than
+              the group chat. Furniture that is not just a stair block pretending to be a chair.
+            </p>
+            <p class="joke">Your back will still hurt. It is a video game. Somehow.</p>
+          </article>
 
-        function showDashboard() {
-            const badge = document.getElementById('profile-initial');
-            badge.innerText = currentUser.name.charAt(0).toUpperCase();
-            badge.style.display = 'flex';
+          <article class="card reveal">
+            <h3>🧱 Wool &amp; concrete stairs and slabs</h3>
+            <p>
+              Wool and concrete now have stairs and slabs. Every builder’s “I’ll fix it with a stair”
+              strategy has been upgraded from a crime to a design choice.
+            </p>
+            <p class="joke">Interior designers, you may now stand up.</p>
+          </article>
 
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('dashboard-screen').classList.add('active');
-        }
+          <article class="card reveal">
+            <h3>🗺️ Better maps</h3>
+            <p>
+              Maps got improvements, which is good news for explorers and terrible news for people
+              who enjoy being lost on purpose.
+            </p>
+            <p class="joke">The wilderness rewards the prepared. And maps are lighter than regret.</p>
+          </article>
 
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const box = document.getElementById('res-box');
-                box.style.display = 'block';
-                box.innerText = `📸 تم رفع (${file.name}): وجبة اقتصادية متوازنة (~480 kcal).`;
-            }
-        }
+          <article class="card card-warn reveal">
+            <h3>⚠️ What is <em>not</em> in it</h3>
+            <p>
+              No new mob. Not one. If you opened the changelog looking for a weird little guy, this
+              drop sends its regards and a cushion.
+            </p>
+            <p class="joke">Tiny Takeover gave you the weird little guys. Balance has been restored.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        function selectFood(name, cal) {
-            const box = document.getElementById('res-box');
-            box.style.display = 'block';
-            box.innerText = `🍽️ تم اختيار: ${name} (${cal} سعرة حرارية).`;
-        }
+  <!-- TIMELINE -->
+  <section class="section section-alt" id="timeline">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="kicker">02 — 2026 in four boxes</p>
+        <h2>The year of the game drop</h2>
+        <p class="sub">
+          One drop roughly every three months. Here is the whole year, ranked by how much it would
+          ruin your afternoon. Click a drop to open the full field notes.
+        </p>
+      </div>
 
-        function askCarizma() {
-            const val = document.getElementById('carizmaInput').value;
-            if(!val) return;
-            const reply = document.getElementById('carizma-reply');
-            reply.style.display = 'block';
-            reply.innerText = `Carizma AI: فكرة ممتازة! بخصوص "${val}"، يمكنك استخدام JavaScript لبناء هذه الخاصية بسلاسة. هل نبدأ بكتابة الكود؟`;
-        }
+      <div class="drops">
+        <article class="drop reveal" data-open="false">
+          <button class="drop-toggle" type="button" aria-expanded="false">
+            <div class="drop-top">
+              <span class="drop-num">DROP 01</span>
+              <span class="drop-date">24 MAR 2026</span>
+            </div>
+            <h3>Tiny Takeover</h3>
+            <p class="drop-ver">Java 26.1 · Bedrock 26.10</p>
+            <p class="drop-teaser">Baby mobs got a glow-up. The name tag became craftable. Chaos, but small.</p>
+            <span class="drop-cta">Read the field notes <span class="chev">▾</span></span>
+          </button>
+          <div class="drop-body">
+            <ul>
+              <li><strong>Baby mobs, rebuilt:</strong> rounder proportions, chubbier faces, new sounds and animations. Saddles, carpets and horse armour no longer render on the little ones, because Mojang finally saw sense.</li>
+              <li><strong>Golden dandelion:</strong> feed one to a baby mob to freeze its growth; feed a second to un-freeze it. One dandelion ringed by eight gold nuggets, and the recipe unlocks after your first successful breeding.</li>
+              <li><strong>Craftable name tags:</strong> the item that used to be a dungeon-only treasure is now a crafting recipe. Treasure hunters are in shambles.</li>
+              <li><strong>Copper trumpets:</strong> a copper block under a note block plays a trumpet, and the pitch changes with oxidation. Wax it to lock the note. Accidental jazz is now a build mechanic.</li>
+            </ul>
+            <p class="drop-verdict"><strong>Verdict:</strong> the correct amount of cute. 8/10.</p>
+          </div>
+        </article>
 
-        function filterFoodList() {
-            let input = document.getElementById('foodSearchInput').value.toLowerCase();
-            let items = document.getElementsByClassName('food-option-item');
-            for (let i = 0; i < items.length; i++) {
-                let text = items[i].innerText.toLowerCase();
-                items[i].style.display = text.includes(input) ? "flex" : "none";
-            }
-        }
+        <article class="drop reveal" data-open="false">
+          <button class="drop-toggle" type="button" aria-expanded="false">
+            <div class="drop-top">
+              <span class="drop-num">DROP 02</span>
+              <span class="drop-date">16 JUN 2026</span>
+            </div>
+            <h3>Chaos Cubed</h3>
+            <p class="drop-ver">Java 26.2 · Bedrock 26.30</p>
+            <p class="drop-teaser">Sulfur caves, a block-eating cube, and the first proper new mob of the year.</p>
+            <span class="drop-cta">Read the field notes <span class="chev">▾</span></span>
+          </button>
+          <div class="drop-body">
+            <ul>
+              <li><strong>Sulfur caves:</strong> a new underground biome of sulfur and cinnabar with gas pools, geysers over magma and spike stalactites. Swimming in potent sulfur gives you nausea. Cave spiders spawn wild here for the first time, without a spawner. Sleep well.</li>
+              <li><strong>The sulfur cube:</strong> a passive slime-adjacent mob that absorbs blocks and changes behaviour depending on what it swallowed. Shear it to get the block back. Kill it and it splits, because of course it does.</li>
+              <li><strong>Two new block families:</strong> sulfur and cinnabar, with polished, brick, chiselled, stairs, slab and wall variants. Builders, your palette called.</li>
+              <li><strong>Friends list:</strong> Java finally got one, with requests, presence and privacy options. A social feature that does not require a Discord link.</li>
+            </ul>
+            <p class="drop-verdict"><strong>Verdict:</strong> the year’s weirdest drop, and therefore the best one. 9/10.</p>
+          </div>
+        </article>
 
-        function openProfileModal() {
-            if(currentUser) {
-                document.getElementById('modal-name').innerText = "👤 " + currentUser.name;
-                document.getElementById('modal-email').innerText = "📧 " + currentUser.email;
-                document.getElementById('profile-modal').style.display = 'flex';
-            }
-        }
+        <article class="drop drop-current reveal" data-open="false">
+          <button class="drop-toggle" type="button" aria-expanded="false">
+            <div class="drop-top">
+              <span class="drop-num">DROP 03</span>
+              <span class="drop-date">15 SEP 2026</span>
+            </div>
+            <h3>Wilderness Bound <span class="badge">LATEST</span></h3>
+            <p class="drop-ver">Java 26.3 · Bedrock 26.50</p>
+            <p class="drop-teaser">An autumn forest, abandoned camps, and the furniture update you did not know you needed.</p>
+            <span class="drop-cta">Read the field notes <span class="chev">▾</span></span>
+          </button>
+          <div class="drop-body">
+            <ul>
+              <li><strong>Dappled forest and poplar wood:</strong> a rust-coloured autumn biome near cold regions, with a full poplar wood set for your next unnecessarily large cabin.</li>
+              <li><strong>Abandoned camps:</strong> tents, campfires and loot in the wild, plus explorer-style maps pointing you at them.</li>
+              <li><strong>Straw beds and cushions:</strong> new places to sleep and sit. The campfire story economy is booming.</li>
+              <li><strong>Builder toys:</strong> wool and concrete stairs and slabs. Also new <code>/compute</code> and <code>/posteffect</code> commands, and spectating through portals.</li>
+            </ul>
+            <p class="drop-verdict"><strong>Verdict:</strong> cosy, useful, zero new mobs. 7.5/10, would camp again.</p>
+          </div>
+        </article>
 
-        function closeProfileModal() {
-            document.getElementById('profile-modal').style.display = 'none';
-        }
+        <article class="drop drop-ice reveal" data-open="false">
+          <button class="drop-toggle" type="button" aria-expanded="false">
+            <div class="drop-top">
+              <span class="drop-num">DROP 04</span>
+              <span class="drop-date">Q4 2026 · TBD</span>
+            </div>
+            <h3>Deep Freeze <span class="badge badge-ice">UPCOMING</span></h3>
+            <p class="drop-ver">Java 26.4 · Bedrock 26.70</p>
+            <p class="drop-teaser">Ice caves, brittle ice, and a zombie that throws snowballs with intent.</p>
+            <span class="drop-cta">Read the field notes <span class="chev">▾</span></span>
+          </button>
+          <div class="drop-body">
+            <ul>
+              <li><strong>Ice caves:</strong> a rare cave biome beneath frozen areas, built from ice, packed ice, blue ice and calcite. Icicles grow on the ceiling and fall when light gets near.</li>
+              <li><strong>Brittle ice:</strong> a new block that presumably breaks. That is the whole pitch and honestly it is enough.</li>
+              <li><strong>Frostbite and freezing:</strong> a hostile ice-cave zombie whose hits apply <em>freezing</em>, a debuff that slows you and chips your health. Some of them throw ice balls. Freezing potions and arrows are brewable with those balls.</li>
+              <li><strong>New blocks and tunes:</strong> packed ice bricks, snow bricks, a calcite block set, jukebox playlists, and a music disc called “Flurry”.</li>
+            </ul>
+            <p class="drop-verdict"><strong>Verdict:</strong> not out yet. Pre-release 1 landed on 24 November, so start backing up your world now.</p>
+          </div>
+        </article>
+      </div>
 
-        function logoutUser() {
-            localStorage.removeItem('nutri_user');
-            currentUser = null;
-            document.getElementById('profile-initial').style.display = 'none';
-            closeProfileModal();
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('auth-screen').classList.add('active');
-        }
+      <p class="timeline-note reveal">
+        One drop per season-ish, four in 2026. Mojang has announced the first 2027 drop too, which
+        includes something called a Throwing Disc. We will get to it when it exists.
+      </p>
+    </div>
+  </section>
 
-        const translations = {
-            ar: {
-                welTitle: "مرحباً بك في عالم الاقتصاد الرقمي والذكاء الاصطناعي",
-                welDesc: "هذا الموقع يجمع بين نظامين رئيسيين: <strong>إدارة الاقتصاد الغذائي والسعرات</strong> لمتابعة صحتك، وقسم خاص مع الذكاء الاصطناعي <strong>"كاريزما (Carizma)"</strong> لتعليم البرمجة وتطوير مهاراتك خطوة بخطوة.",
-                welBtn: "ابدأ الآن",
-                authTitle: "إنشاء حساب جديد",
-                lblName: "الاسم الكامل",
-                lblEmail: "البريد الإلكتروني",
-                lblPass: "كلمة المرور",
-                btnAuth: "تسجيل والدخول"
-            },
-            en: {
-                welTitle: "Welcome to the Digital Economy & AI World",
-                welDesc: "This platform integrates <strong>Food Economy & Calorie Management</strong> with an advanced AI programming mentor named <strong>Carizma</strong> to guide your coding journey.",
-                welBtn: "Get Started",
-                authTitle: "Create Account",
-                lblName: "Full Name",
-                lblEmail: "Email",
-                lblPass: "Password",
-                btnAuth: "Sign Up & Login"
-            }
-        };
+  <!-- DEEP FREEZE -->
+  <section class="section freeze" id="deepfreeze">
+    <div class="freeze-bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="freeze-inner">
+        <div class="freeze-copy reveal">
+          <p class="kicker kicker-ice">03 — Next up</p>
+          <h2>Deep Freeze <span class="ver ver-ice">26.4</span></h2>
+          <p class="sub">
+            The fourth and final drop of 2026, and officially named in mid-November after months of
+            everyone calling it “the winter drop”. No release date yet. Pre-release 1 shipped on
+            24 November 2026, which is Mojang’s way of saying “soon, stop asking”.
+          </p>
 
-        function changeLanguage() {
-            const lang = document.getElementById('langSwitcher').value;
-            const root = document.getElementById('html-root');
-            root.setAttribute('lang', lang);
-            root.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+          <div class="freeze-features">
+            <div class="feed">
+              <span class="feed-ico">❄️</span>
+              <div><h3>Ice caves</h3><p>Rare underground caverns under cold biomes, all packed ice and blue ice and calcite. Bring a torch and regret.</p></div>
+            </div>
+            <div class="feed">
+              <span class="feed-ico">🧟</span>
+              <div><h3>Frostbite zombie</h3><p>A frozen hostile variant that applies the new <em>freezing</em> effect on hit. Some throw ice balls, because melee was too fair.</p></div>
+            </div>
+            <div class="feed">
+              <span class="feed-ico">🧊</span>
+              <div><h3>Icicles &amp; brittle ice</h3><p>Ceiling icicles that drop when light gets close, and brittle ice that does exactly what the name promises.</p></div>
+            </div>
+            <div class="feed">
+              <span class="feed-ico">🎵</span>
+              <div><h3>Jukebox playlists</h3><p>Queue music instead of swapping discs by hand. “Flurry” is the new disc. Your base is now a café.</p></div>
+            </div>
+          </div>
+        </div>
 
-            document.getElementById('wel-title').innerHTML = translations[lang].welTitle;
-            document.getElementById('wel-desc').innerHTML = translations[lang].welDesc;
-            document.getElementById('wel-btn').innerText = translations[lang].welBtn;
-            document.getElementById('auth-title').innerText = translations[lang].authTitle;
-            document.getElementById('lbl-name').innerText = translations[lang].lblName;
-            document.getElementById('lbl-email').innerText = translations[lang].lblEmail;
-            document.getElementById('lbl-pass').innerText = translations[lang].lblPass;
-            document.getElementById('btn-auth').innerText = translations[lang].btnAuth;
-        }
-    </script>
+        <aside class="freeze-panel reveal">
+          <img src="assets/ice.jpg" alt="Pixel art of an ice cave with glowing blue crystals and icicles." />
+          <div class="meter-card">
+            <h3>Unofficial hype meter</h3>
+            <div class="meter"><div class="meter-fill" style="--w: 86%"></div></div>
+            <p class="meter-label"><span>86%</span> — “cave update with extra steps”, in the best way</p>
+            <div class="meter-row">
+              <div>
+                <span class="mini-label">Release window</span>
+                <strong>Q4 2026 (probably December)</strong>
+              </div>
+              <div>
+                <span class="mini-label">Status</span>
+                <strong class="ice-text">Pre-release 1</strong>
+              </div>
+            </div>
+            <p class="fineprint">
+              Features in pre-release can still change. Do not start a survival world named
+              “frostbite main” and then blame this website.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERSION DECODER -->
+  <section class="section section-alt" id="versions">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="kicker">04 — Public service announcement</p>
+        <h2>Why is it 26.3 and not 1.22?</h2>
+        <p class="sub">
+          In December 2025 Mojang retired the old <code>1.x</code> numbering. From 2026, the first
+          number is the year, the second is which drop of that year, and an optional third is a hotfix.
+          Paste a version below and the machine will explain it to you, rudely but accurately.
+        </p>
+      </div>
+
+      <div class="decoder reveal">
+        <div class="decoder-head">
+          <label for="versionInput">Version decoding machine™</label>
+          <p>Try <code>26.3</code>, <code>26.63</code>, <code>26.4</code> or <code>1.21.11</code>.</p>
+        </div>
+        <form class="decoder-form" id="decoderForm" autocomplete="off">
+          <input id="versionInput" name="version" placeholder="Type a version, e.g. 26.3" aria-describedby="decoderOut" />
+          <button class="btn" type="submit">Decode it</button>
+        </form>
+        <div class="decoder-out" id="decoderOut" role="status" aria-live="polite">
+          <p class="decoder-idle">Nothing decoded yet. The machine is warming up its one (1) brain cell.</p>
+        </div>
+      </div>
+
+      <div class="compare reveal">
+        <div class="compare-col">
+          <h3>Java Edition</h3>
+          <p class="big-num">26.3</p>
+          <p>Year <strong>26</strong> · drop <strong>3</strong> · no hotfix. The “real” update number, whatever that means.</p>
+        </div>
+        <div class="compare-vs" aria-hidden="true">VS</div>
+        <div class="compare-col">
+          <h3>Bedrock Edition</h3>
+          <p class="big-num">26.50</p>
+          <p>Same drop, different counting. Bedrock’s second number jumps by tens, which is why the same update looks like a completely different release.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="kicker">05 — Questions people actually ask</p>
+        <h2>The FAQ, minus the waffle</h2>
+      </div>
+
+      <div class="faq">
+        <details class="reveal" open>
+          <summary>What is the latest Minecraft update right now?</summary>
+          <p>
+            <strong>Wilderness Bound</strong>: Java Edition 26.3 and Bedrock Edition 26.50, released
+            15 September 2026. Bedrock is currently on the 26.60 line, with hotfix 26.63 published on
+            11 November 2026. Java’s newest test build is 26.4 Pre-release 1.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Is Minecraft 1.22 ever coming?</summary>
+          <p>
+            No. The last 1.x release was 1.21.11 (Mounts of Mayhem) on 9 December 2025. Everything
+            after that uses the year-drop format. If someone tells you 1.22 is out, they are selling
+            you something.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Snapshot, pre-release, release — what is the difference?</summary>
+          <p>
+            A <strong>snapshot</strong> is an early, unstable test build. A <strong>pre-release</strong>
+            is a feature-complete build that is only being bug-fixed, which is where 26.4 is now. A
+            <strong>release</strong> is the one you should actually play. Bedrock calls its test builds
+            betas and previews instead.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Can I play Deep Freeze before it comes out?</summary>
+          <p>
+            On Java: open the launcher, enable snapshots in the Installation settings, and pick the
+            latest 26.4 build. On Bedrock: enable previews or betas. Back up the world first, because
+            “brittle” is in the patch notes for a reason.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Should I start a new world for each drop?</summary>
+          <p>
+            You do not have to. Existing worlds generate new biomes in chunks you have not explored
+            yet, so the dappled forest will appear wherever you have not already paved a motorway.
+            Ice caves follow the same rule.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Which drop was actually the best of 2026?</summary>
+          <p>
+            Chaos Cubed, on the grounds that it added a cube that eats blocks and an entire cave that
+            makes you nauseous on purpose. Tiny Takeover is the one you show to people who say
+            Minecraft has no personality. Wilderness Bound is the one you build a house in.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section outro">
+    <div class="wrap outro-inner reveal">
+      <h2>That is the whole update situation.</h2>
+      <p>
+        Four drops, one confusing numbering scheme, and a zombie that will soon throw ice at you.
+        Bookmark this page, come back when Deep Freeze gets a date, and remember: the wilderness
+        rewards the prepared.
+      </p>
+      <a class="btn" href="#top">Back to the top</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div>
+      <span class="brand brand-small"><span class="brand-cube" aria-hidden="true"></span> BLOCKDIGEST</span>
+      <p>An independent fan page. Not affiliated with Mojang or Microsoft. Written by someone with strong opinions about stairs.</p>
+    </div>
+    <div class="sources">
+      <span class="mini-label">Sources</span>
+      <a href="https://minecraft.wiki/w/Game_drop" target="_blank" rel="noopener">Minecraft Wiki — Game drop</a>
+      <a href="https://www.minecraft.net/en-us/updates/minecraft-updates-timeline-and-evolution" target="_blank" rel="noopener">Minecraft.net — update history</a>
+      <a href="https://www.minecraft.net/en-us/article/minecraft-java-edition-26-3" target="_blank" rel="noopener">Minecraft.net — Java 26.3</a>
+      <a href="https://www.minecraft.net/en-us/article/minecraft--bedrock-edition-26-60-changelog" target="_blank" rel="noopener">Minecraft.net — Bedrock 26.60</a>
+      <p class="fineprint">Information checked 25 November 2026.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="toast-ico">🏆</span>
+  <div>
+    <strong>Achievement Get!</strong>
+    <span id="toastText">You read a thing.</span>
+  </div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
+
+   
